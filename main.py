@@ -18,4 +18,4 @@ app.include_router(video_downloader_router, prefix="/tools", tags=["tools"])
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="unix:/root/video-downloader/app.sock", port=0)
+    uvicorn.run("main:app", host="127.0.0.1", port=8000)
