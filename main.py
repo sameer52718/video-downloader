@@ -1,9 +1,21 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from routes.video_downloader_route import video_downloader_router
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()
+
+
+# Allow CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with specific origins in production, e.g., ["http://localhost:3000"]
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Mount static files directory for serving static content
 app.mount("/videos", StaticFiles(directory="downloads"), name="videos")
