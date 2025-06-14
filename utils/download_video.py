@@ -39,9 +39,9 @@ def download_video(video_url:str, platform:str):
             # Remove original downloaded file after conversion
             os.remove(filepath)
 
-            return f"http://localhost:8000/videos/{tiktok_filename}"
+            return f"https://downloader.informreaders.com/videos/{tiktok_filename}"
 
-        return f"http://localhost:8000/videos/{filename}"
+        return f"https://downloader.informreaders.com/videos/{filename}"
     
     except Exception as e:
         # Cleanup on error
