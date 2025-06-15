@@ -16,7 +16,7 @@ def download_video(video_url:str, platform:str):
     'quiet': True,
     'merge_output_format': 'mp4',
     'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4'
-    'cookiefile': 'youtube_cookies.txt'
+    'cookiefile': 'cookies.txt'
     }
 
     try:
