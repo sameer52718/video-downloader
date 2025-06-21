@@ -2,8 +2,16 @@ import os
 import uuid
 import yt_dlp
 import ffmpeg
+from utils.get_url import clean_video_url
 
 def download_video(video_url:str, platform:str):
+
+    # clean the video URL if necessary
+    if platform == "youtube":
+        print("Cleaning YouTube URL...")
+        video_url = clean_video_url(video_url)
+
+
     DOWNLOAD_DIR = "downloads"
     os.makedirs(DOWNLOAD_DIR, exist_ok=True)
 
@@ -17,7 +25,7 @@ def download_video(video_url:str, platform:str):
     'merge_output_format': 'mp4',
     'format': 'best',
     #'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
-    'cookiefile': 'cookies.txt'
+    #'cookiefile': 'cookies.txt'
     }
 
     try:
