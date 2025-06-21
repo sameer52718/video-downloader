@@ -2,14 +2,9 @@ import os
 import uuid
 import yt_dlp
 import ffmpeg
-from utils.get_url import clean_video_url
+from utils.get_cookies import get_cookie
 
 def download_video(video_url:str, platform:str):
-
-    # clean the video URL if necessary
-    if platform == "youtube":
-        print("Cleaning YouTube URL...")
-        video_url = clean_video_url(video_url)
 
 
     DOWNLOAD_DIR = "downloads"
@@ -27,6 +22,22 @@ def download_video(video_url:str, platform:str):
     #'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
     #'cookiefile': 'cookies.txt'
     }
+
+    if platform == "youtube":
+        selenium_cookie = get_cookie(video_url)
+        
+        if selenium_cookie:
+            print("Cookies found for YouTube video...")
+
+            yt_dlp_cookies = []
+            for cookie in selenium_cookie:
+                yt_dlp_cookies.append({
+                    'name': cookie['name'],
+                    'value': cookie['value'],
+                    'domain': cookie['domain'],
+                })
+            ydl_opts['cookies'] = yt_dlp_cookies
+        
 
     try:
         # Download file
