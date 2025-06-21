@@ -32,5 +32,5 @@ def video_downloader(platform: str = Query(...), video_url: str = Query(...)):
     except Exception as e:
         return JSONResponse(
             status_code=500,
-            content={"error": f"An error occurred while downloading the video: {str(e)}"}
+            content={"error": f"An error Aagya while downloading the video: {str(e)}"}
         )
