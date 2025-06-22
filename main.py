@@ -4,6 +4,7 @@ import uvicorn
 from routes.video_downloader_route import video_downloader_router
 from fastapi.staticfiles import StaticFiles
 
+
 app = FastAPI()
 
 
