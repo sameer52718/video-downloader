@@ -21,16 +21,17 @@ def download_video(video_url:str, platform:str):
     'merge_output_format': 'mp4',
     'format': 'best',
     # 'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
+    'cookiesfrombrowser': ('chrome',),
     }
 
-    if platform == "youtube":
-        selenium_cookie = get_cookie(video_url)
+    # if platform == "youtube":
+    #     selenium_cookie = get_cookie(video_url)
         
-        if selenium_cookie:
-            print("Cookies found for YouTube video...")
-            save_cookies_to_file(selenium_cookie, filename="cookies.txt")
-            ydl_opts['cookiefile'] = 'cookies.txt'
-            print("Cookies added to yt-dlp options.")
+    #     if selenium_cookie:
+    #         print("Cookies found for YouTube video...")
+    #         save_cookies_to_file(selenium_cookie, filename="cookies.txt")
+    #         ydl_opts['cookiefile'] = 'cookies.txt'
+    #         print("Cookies added to yt-dlp options.")
         
 
     try:
