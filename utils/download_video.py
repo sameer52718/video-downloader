@@ -21,7 +21,7 @@ def download_video(video_url:str, platform:str):
     'merge_output_format': 'mp4',
     'format': 'best',
     # 'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
-    'cookiesfrombrowser': ('chrome',),
+    'cookiefile': 'cookies.txt',
     }
 
     # if platform == "youtube":
