@@ -3,6 +3,7 @@ import uuid
 import yt_dlp
 import ffmpeg
 from utils.get_cookies import get_cookie
+from utils.save_cookie import save_cookies_to_file
 
 def download_video(video_url:str, platform:str):
 
@@ -27,15 +28,8 @@ def download_video(video_url:str, platform:str):
         
         if selenium_cookie:
             print("Cookies found for YouTube video...")
-
-            yt_dlp_cookies = []
-            for cookie in selenium_cookie:
-                yt_dlp_cookies.append({
-                    'name': cookie['name'],
-                    'value': cookie['value'],
-                    'domain': cookie['domain'],
-                })
-            ydl_opts['cookies'] = yt_dlp_cookies
+            save_cookies_to_file(selenium_cookie, filename="cookies.txt")
+            ydl_opts['cookiefile'] = 'cookies.txt'
             print("Cookies added to yt-dlp options.")
         
 

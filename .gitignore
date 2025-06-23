@@ -9,5 +9,4 @@ venv/
 *.sqlite3
 .DS_Store
 *.log
-cookies.txt
 downloads/
