@@ -18,8 +18,8 @@ def download_video(video_url:str, platform:str):
     'outtmpl': filepath,
     'quiet': True,
     'merge_output_format': 'mp4',
-    #'format': 'best',
-    'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
+    'format': 'best',
+    # 'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
     }
 
     if platform == "youtube":
@@ -36,6 +36,7 @@ def download_video(video_url:str, platform:str):
                     'domain': cookie['domain'],
                 })
             ydl_opts['cookies'] = yt_dlp_cookies
+            print("Cookies added to yt-dlp options.")
         
 
     try:
