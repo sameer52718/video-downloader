@@ -22,8 +22,10 @@ def download_video(video_url:str, platform:str):
     'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
     }
 
+    if platform == "instagram":
+        ydl_opts['cookiefile'] = 'instagram_cookies.txt'
     if platform == "youtube":
-        ydl_opts['cookiefile'] = 'cookies.txt'
+        ydl_opts['cookiefile'] = 'youtube_cookies.txt'
         
 
     try:
