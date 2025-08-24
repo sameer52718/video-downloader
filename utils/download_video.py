@@ -19,6 +19,10 @@ def download_video(video_url:str, platform:str):
         "quiet": True,
         "skip_download": True,   # don't download, only extract info
         }
+        if platform == "instagram":
+            ydl_opts['cookiefile'] = 'instagram_cookies.txt'
+        if platform == "youtube":
+            ydl_opts['cookiefile'] = 'youtube_cookies.txt'
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(video_url, download=False)
