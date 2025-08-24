@@ -14,47 +14,74 @@ def download_video(video_url:str, platform:str):
     filename = f"{uuid.uuid4()}.mp4"
     filepath = os.path.join(DOWNLOAD_DIR, filename)
 
-    # Base download options
-    ydl_opts = {
-    'outtmpl': filepath,
-    'quiet': True,
-    'merge_output_format': 'mp4',
-    'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
-    }
+    if platform == "youtube" or platform == "instagram":
+        ydl_opts = {
+        "quiet": True,
+        "skip_download": True,   # don't download, only extract info
+        }
 
-    if platform == "instagram":
-        ydl_opts['cookiefile'] = 'instagram_cookies.txt'
-    if platform == "youtube":
-        ydl_opts['cookiefile'] = 'youtube_cookies.txt'
-        
-
-    try:
-        # Download file
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([video_url])
+            info = ydl.extract_info(video_url, download=False)
+            formats = info.get("formats", [])
 
-        # Special processing for TikTok
-        if platform == "tiktok":
-            tiktok_filename = f"tiktok_{uuid.uuid4()}.mp4"
-            tiktok_file = os.path.join(DOWNLOAD_DIR, tiktok_filename)
+        # ✅ Get only MP4 formats with audio+video
+        mp4_formats = [
+            f for f in formats
+            if f.get("ext") == "mp4"
+            and f.get("acodec") != "none"
+            and f.get("vcodec") != "none"
+        ]
 
-            ffmpeg.input(filepath).output(
-                tiktok_file, 
-                vcodec='libx264', 
-                acodec='aac', 
-                movflags='+faststart',
-                preset='fast'
-                ).run(overwrite_output=True)
+        if not mp4_formats:
+            return {"error": "No MP4 video with audio available."}
+
+        # ✅ Pick the best quality (highest resolution)
+        best_mp4 = max(mp4_formats, key=lambda f: f.get("height", 0))
+
+        return {
+            "video_url": best_mp4["url"],
+            "title": info.get("title"),
+            "duration": info.get("duration"),
+            "thumbnail": info.get("thumbnail"),
+            "quality": f"{best_mp4.get('height')}p"
+        }
+
+    else:
+        # Base download options
+        ydl_opts = {
+        'outtmpl': filepath,
+        'quiet': True,
+        'merge_output_format': 'mp4',
+        'format': 'bestvideo[vcodec=avc1][height<=720]+bestaudio[acodec^=mp4a]/mp4',
+        }
             
-            # Remove original downloaded file after conversion
-            os.remove(filepath)
+        try:
+            # Download file
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([video_url])
 
-            return f"https://downloader.informreaders.com/videos/{tiktok_filename}"
+            # Special processing for TikTok
+            if platform == "tiktok":
+                tiktok_filename = f"tiktok_{uuid.uuid4()}.mp4"
+                tiktok_file = os.path.join(DOWNLOAD_DIR, tiktok_filename)
 
-        return f"https://downloader.informreaders.com/videos/{filename}"
-    
-    except Exception as e:
-        # Cleanup on error
-        if os.path.exists(filepath):
-            os.remove(filepath)
-        raise e
+                ffmpeg.input(filepath).output(
+                    tiktok_file, 
+                    vcodec='libx264', 
+                    acodec='aac', 
+                    movflags='+faststart',
+                    preset='fast'
+                    ).run(overwrite_output=True)
+                
+                # Remove original downloaded file after conversion
+                os.remove(filepath)
+
+                return f"https://downloader.informreaders.com/videos/{tiktok_filename}"
+
+            return f"https://downloader.informreaders.com/videos/{filename}"
+        
+        except Exception as e:
+            # Cleanup on error
+            if os.path.exists(filepath):
+                os.remove(filepath)
+            raise e
