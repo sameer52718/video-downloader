@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from routes.video_downloader_route import video_downloader_router
+from routes.jobs_route import jobs_router
 from fastapi.staticfiles import StaticFiles
 
 
@@ -28,6 +29,8 @@ async def home():
 
 # include the video downloader router
 app.include_router(video_downloader_router, prefix="/tools", tags=["tools"])
+# include the jobs router
+app.include_router(jobs_router, prefix="/jobs", tags=["jobs"])
 
 
 if __name__ == "__main__":

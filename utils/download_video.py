@@ -42,13 +42,7 @@ def download_video(video_url:str, platform:str):
         # ✅ Pick the best quality (highest resolution)
         best_mp4 = max(mp4_formats, key=lambda f: f.get("height", 0))
 
-        return {
-            "video_url": best_mp4["url"],
-            "title": info.get("title"),
-            "duration": info.get("duration"),
-            "thumbnail": info.get("thumbnail"),
-            "quality": f"{best_mp4.get('height')}p"
-        }
+        return best_mp4["url"]
 
     else:
         # Base download options
@@ -80,11 +74,9 @@ def download_video(video_url:str, platform:str):
                 # Remove original downloaded file after conversion
                 os.remove(filepath)
 
-                vid_url = f"https://downloader.informreaders.com/videos/{tiktok_filename}"
-                return {"video_url": vid_url}
+                return f"https://downloader.informreaders.com/videos/{tiktok_filename}"
 
-            vid_url = f"https://downloader.informreaders.com/videos/{filename}"
-            return {"video_url": vid_url}
+            return f"https://downloader.informreaders.com/videos/{filename}"
         
         except Exception as e:
             # Cleanup on error
