@@ -2,6 +2,8 @@ from fastapi import APIRouter, Query, HTTPException
 from careerjet_api_client import CareerjetAPIClient
 from dotenv import load_dotenv
 import os, hashlib
+import re
+from urllib.parse import urlparse
 
 load_dotenv()
 AFFILIATE_ID = os.getenv("AFFILIATE_ID")
@@ -12,9 +14,29 @@ cj = CareerjetAPIClient("en_GB")
 # In-memory cache for jobs
 JOB_CACHE = {}
 
-def generate_job_id(job_url: str) -> str:
-    """Generate a short unique ID from job URL."""
-    return hashlib.sha256(job_url.encode()).hexdigest()[:12]
+def slugify(text: str) -> str:
+    """Convert a string into a URL-safe slug."""
+    text = text.lower()
+    text = re.sub(r"[^\w\s-]", "", text)  # remove special characters
+    text = re.sub(r"\s+", "-", text)      # replace spaces with hyphens
+    return text.strip("-")
+
+
+def generate_job_id(job: dict) -> str:
+    """
+    Generate a slug-based job_id using title, company, and location.
+    Falls back to hash if data is missing.
+    """
+    title = job.get("title", "")
+    company = job.get("company", "")
+    location = job.get("locations", job.get("location", ""))
+
+    if title and company:
+        slug = "-".join(filter(None, [slugify(title), slugify(company), slugify(location)]))
+        return slug[:80]  # keep slug within a safe length
+    else:
+        # fallback: hash of URL if title/company not available
+        return hashlib.sha256(job["url"].encode()).hexdigest()[:12]
 
 
 @jobs_router.get("/")
@@ -38,7 +60,7 @@ def get_jobs(
 
         jobs = []
         for job in result_json.get("jobs", []):
-            job_id = generate_job_id(job["url"])
+            job_id = generate_job_id(job)
             job_with_id = {**job, "job_id": job_id}
             JOB_CACHE[job_id] = job_with_id  # store in cache
             jobs.append(job_with_id)
